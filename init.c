@@ -24,26 +24,26 @@ void init(void){ //sets up ncurses
     refresh();
   }
 
-  if (can_change_color()){
-    //if colors can be changed, then make them nice
-    //e.g. some color schemes are pretty wacky
+  /* if (can_change_color()){ */
+  /*   //if colors can be changed, then make them nice */
+  /*   //e.g. some color schemes are pretty wacky */
 
-    init_color(COLOR_WHITE, 1000, 1000, 1000);
-    init_color(COLOR_ORANGE, 1000, 500, 0); //new color!
-    init_color(COLOR_CYAN, 0, 1000, 1000);
-    init_color(COLOR_YELLOW, 1000, 1000, 0);
-    init_color(COLOR_MAGENTA, 1000, 0, 1000);
-    init_color(COLOR_GREEN, 0, 1000, 0);
-    init_color(COLOR_RED, 1000, 0, 0);
-    init_color(COLOR_BLUE, 0, 0, 1000);
-  }
-  else{
-    endwin();
-    printf("Terminal does not support color changing.\nThe game may use an odd color scheme. Continue? (y/n)");
-    if (getchar() != 'y') 
-      exit(3);
-    refresh();
-  }
+  /*   init_color(COLOR_WHITE, 1000, 1000, 1000); */
+  /*   init_color(COLOR_ORANGE, 1000, 500, 0); //new color! */
+  /*   init_color(COLOR_CYAN, 0, 1000, 1000); */
+  /*   init_color(COLOR_YELLOW, 1000, 1000, 0); */
+  /*   init_color(COLOR_MAGENTA, 1000, 0, 1000); */
+  /*   init_color(COLOR_GREEN, 0, 1000, 0); */
+  /*   init_color(COLOR_RED, 1000, 0, 0); */
+  /*   init_color(COLOR_BLUE, 0, 0, 1000); */
+  /* } */
+  /* else{ */
+  /*   endwin(); */
+  /*   printf("Terminal does not support color changing.\nThe game may use an odd color scheme. Continue? (y/n)"); */
+  /*   if (getchar() != 'y') */ 
+  /*     exit(3); */
+  /*   refresh(); */
+  /* } */
 
   cbreak(); //interrupts are still passed directly to terminal
   //raw(); //even interrupts will pass through program first
@@ -79,6 +79,5 @@ void init(void){ //sets up ncurses
   init_pair(17, COLOR_ORANGE, COLOR_BLACK);
 
   init_pair(18, COLOR_BLACK, COLOR_BLACK);
- 
 }
 
