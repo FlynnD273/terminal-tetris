@@ -7,11 +7,14 @@
 #include "interface.h"
 // controls everything happening out of the matrix
 
+#include "keymap.h"
+
 // #include "menu.h"
 // controls everything happening in the pregame menu
 
 #include <ncurses.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/time.h> //may not be in every machine?
 
 #define microsNow tval_now.tv_sec * 1000000 + tval_now.tv_usec
@@ -20,10 +23,10 @@
 #define MAX_MOVE_RESETS 15
 #define MAX_FLOORKICKS 99999
 
+
 // TODO one floorkick rule, implement enhanced rotationnn algorithm
 
 int main(int argc, char *argv[]) {
-
   init(); // sets up ncurses
   initMatrix();
   initHold();
@@ -39,6 +42,9 @@ int main(int argc, char *argv[]) {
 
   int framerate = 60; // set this at will, but keep it reasonable! default 60
   int microsPerFrame = 1000000 / framerate;
+	short is_paused = 0;
+	long paused_time = 0;
+	long last_paused_timestamp = 0;
 
   /* gameplay flags */
   int pieceCanDrop = 0;  // is there a currently falling piece
@@ -63,6 +69,10 @@ int main(int argc, char *argv[]) {
 
   /* gameplay variables */
   int level = 1;          // level determines many timing parameters
+	if (argc > 1) {
+		level = atoi(argv[1]);
+	}
+
   int linesPerLevel = 10; // clear 10(x-1) lines in total to reach level x
   int lines = 0;          // lines cleared in total
   int score = 0;          // score
@@ -82,7 +92,7 @@ int main(int argc, char *argv[]) {
   int techniquePeriod = 60 * microsPerFrame;
   long int techniqueDeadline = microsNow;
   // write down the name of the most recent lineclear for up to 1 second
-  int levelupPeriod = 60 * microsPerFrame;
+  int levelupPeriod = 20 * microsPerFrame;
   long int levelupDeadline = microsNow;
   // write down a levelup event for up to 1 second
   int gravityPeriod = (int)(microsPerFrame / velocityTable[level]);
@@ -102,11 +112,23 @@ int main(int argc, char *argv[]) {
   int controlPeriod = microsPerFrame;
   long int controlDeadline = microsNow + controlPeriod;
   // poll for inputs every frame
+	
 
   while (!topout()) {
     napms(1); // 1 millisecond sleep for lots of cpu freedom
 
     gettimeofday(&tval_now, NULL); // get time now
+
+		if (is_paused && microsNow > controlDeadline) {
+      static int ch;
+      while ((ch = getch()) != ERR) { // while inputs remain
+				if (ch == KEY_PAUSE) {
+					is_paused = 0;
+					paused_time += microsNow - last_paused_timestamp;
+				}
+			}
+			continue;
+		}
 
     if (microsNow > displayDeadline) { // time to display update
       drawMatrix();
@@ -116,7 +138,7 @@ int main(int argc, char *argv[]) {
       drawPreview();
       refreshMatrix();
 
-      drawTime(microsNow - microsStart);
+      drawTime(microsNow - microsStart - paused_time);
       drawLines(lines);
       if (microsNow > levelupDeadline)
         drawLevel(level);
@@ -136,11 +158,16 @@ int main(int argc, char *argv[]) {
         // TODO customizable keys
 
         switch (ch) {
-        case 'c':
+				case KEY_PAUSE:
+					is_paused = 1;
+					last_paused_timestamp = microsNow;
+					continue;
+					break;
+        case KEY_HOLD:
           if (canHold && hold())
             canHold = 0;
           break;
-        case KEY_RIGHT:
+        case KEY_SHIFT_RIGHT:
           if (movesLeft && shift(1)) {
             lockDeadline =
                 microsNow + lockPeriod; // delay lock timer on input success
@@ -148,7 +175,7 @@ int main(int argc, char *argv[]) {
           if (canLock)
             movesLeft--;
           break;
-        case KEY_LEFT:
+        case KEY_SHIFT_LEFT:
           if (movesLeft && shift(-1)) {
             lockDeadline =
                 microsNow + lockPeriod; // delay lock timer on input success
@@ -156,7 +183,7 @@ int main(int argc, char *argv[]) {
           if (canLock)
             movesLeft--;
           break;
-        case 'x': // rotate CW
+        case KEY_ROT_CW:
           if (movesLeft && rotate(1, floorkicksLeft)) {
             lockDeadline = microsNow + lockPeriod;
           }
@@ -165,7 +192,7 @@ int main(int argc, char *argv[]) {
           if (canLock)
             movesLeft--;
           break;
-        case 'z':
+        case KEY_ROT_CCW:
           if (movesLeft && rotate(-1, floorkicksLeft)) {
             lockDeadline = microsNow + lockPeriod;
           }
@@ -174,13 +201,13 @@ int main(int argc, char *argv[]) {
           if (canLock)
             movesLeft--;
           break;
-        case KEY_DOWN:      // softdrop
+        case KEY_SOFT_DROP:
           if (gravity(0)) { // won't lock if the mino bottoms out
             gravityDeadline = microsNow + gravityPeriod; // reset grav clock
             score += 1; // 1 point per row dropped
           }
           break;
-        case KEY_UP:                              // space = harddrop
+        case KEY_HARD_DROP:                              // space = harddrop
           while ((pieceOnMatrix = gravity(1))) // immediately bottoms/locks
             score += 2;                        // 2 points per row dropped
 

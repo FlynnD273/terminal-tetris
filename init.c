@@ -14,15 +14,15 @@ void init(void){ //sets up ncurses
   }
   start_color();
     
-  int rows, cols;
-  getmaxyx(stdscr, rows, cols);
-  if (rows != 24 || cols != 80){
-    endwin();
-    printf("Terminal is not the optimal size (80 x 24). Continue? (y/n)");
-    if (getchar() != 'y') 
-      exit(2);
-    refresh();
-  }
+  /* int rows, cols; */
+  /* getmaxyx(stdscr, rows, cols); */
+  /* if (rows != 24 || cols != 80){ */
+  /*   endwin(); */
+  /*   printf("Terminal is not the optimal size (80 x 24). Continue? (y/n)"); */
+  /*   if (getchar() != 'y') */ 
+  /*     exit(2); */
+  /*   refresh(); */
+  /* } */
 
   /* if (can_change_color()){ */
   /*   //if colors can be changed, then make them nice */
