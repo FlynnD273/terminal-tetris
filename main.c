@@ -335,5 +335,5 @@ int main(int argc, char *argv[]) {
   printf("Your score: %d\n", score);
   printf("Ending level: %d\n", level);
   printf("Lines cleared: %d\n", lines);
-  printf("Time:\n");
+  printf("Time: %0.02fs\n", (microsNow - microsStart - paused_time) / 1000000.);
 }
