@@ -1,4 +1,5 @@
 #include "init.h"
+#include "matrix.h"
 
 #include <stdio.h>
 #include <ncurses.h>
@@ -24,26 +25,26 @@ void init(void){ //sets up ncurses
   /*   refresh(); */
   /* } */
 
-  /* if (can_change_color()){ */
-  /*   //if colors can be changed, then make them nice */
-  /*   //e.g. some color schemes are pretty wacky */
+  if (can_change_color()){
+    //if colors can be changed, then make them nice
+    //e.g. some color schemes are pretty wacky
 
-  /*   init_color(COLOR_WHITE, 1000, 1000, 1000); */
-  /*   init_color(COLOR_ORANGE, 1000, 500, 0); //new color! */
-  /*   init_color(COLOR_CYAN, 0, 1000, 1000); */
-  /*   init_color(COLOR_YELLOW, 1000, 1000, 0); */
-  /*   init_color(COLOR_MAGENTA, 1000, 0, 1000); */
-  /*   init_color(COLOR_GREEN, 0, 1000, 0); */
-  /*   init_color(COLOR_RED, 1000, 0, 0); */
-  /*   init_color(COLOR_BLUE, 0, 0, 1000); */
-  /* } */
-  /* else{ */
-  /*   endwin(); */
-  /*   printf("Terminal does not support color changing.\nThe game may use an odd color scheme. Continue? (y/n)"); */
-  /*   if (getchar() != 'y') */ 
-  /*     exit(3); */
-  /*   refresh(); */
-  /* } */
+    init_color(COLOR_WHITE, 1000, 1000, 1000);
+    init_color(COLOR_ORANGE, 827, 624, 420); //new color!
+    init_color(COLOR_CYAN, 51, 804, 804);
+    init_color(COLOR_YELLOW, 808, 800, 420);
+    init_color(COLOR_MAGENTA, 812, 573, 820);
+    init_color(COLOR_GREEN, 219, 788, 439);
+    init_color(COLOR_RED, 800, 573, 573);
+    init_color(COLOR_BLUE, 51, 451, 800);
+  }
+  else{
+    endwin();
+    printf("Terminal does not support color changing.\nThe game may use an odd color scheme. Continue? (y/n)");
+    if (getchar() != 'y') 
+      exit(3);
+    refresh();
+  }
 
   cbreak(); //interrupts are still passed directly to terminal
   //raw(); //even interrupts will pass through program first
@@ -59,13 +60,13 @@ void init(void){ //sets up ncurses
      orange must be created if possible
   */
   
-  init_pair(1, COLOR_BLACK, COLOR_CYAN);   //colored background
-  init_pair(2, COLOR_BLACK, COLOR_YELLOW); //used for drawing minos
-  init_pair(3, COLOR_BLACK, COLOR_MAGENTA);//a character subtracts color
-  init_pair(4, COLOR_BLACK, COLOR_GREEN);
-  init_pair(5, COLOR_BLACK, COLOR_RED);
-  init_pair(6, COLOR_BLACK, COLOR_BLUE);
-  init_pair(7, COLOR_BLACK, COLOR_ORANGE);
+  init_pair(I, COLOR_BLACK, COLOR_CYAN);   //colored background
+  init_pair(O, COLOR_BLACK, COLOR_YELLOW); //used for drawing minos
+  init_pair(T, COLOR_BLACK, COLOR_MAGENTA);//a character subtracts color
+  init_pair(S, COLOR_BLACK, COLOR_GREEN);
+  init_pair(Z, COLOR_BLACK, COLOR_RED);
+  init_pair(J, COLOR_BLACK, COLOR_BLUE);
+  init_pair(L, COLOR_BLACK, COLOR_ORANGE);
   
   init_pair(8, COLOR_BLACK, COLOR_BLACK);
   init_pair(9, COLOR_BLACK, COLOR_WHITE);
